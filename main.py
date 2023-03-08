@@ -1,5 +1,9 @@
 import subprocess
+from asyncio.subprocess import create_subprocess_shell, create_subprocess_exec
+import asyncio
+import aiofiles
 import os
+from asgiref.sync import sync_to_async
 
 
 def get_zip_archive(original_folder, archive_folder, file_archive_name=None):
@@ -23,7 +27,25 @@ def get_zip_archive(original_folder, archive_folder, file_archive_name=None):
     return func_return
 
 
-def write_binary_archive_to_zip(binary_archive, file_archive_name, archive_folder):
+async def get_binary_zip_archive(original_folder, kb):
+    byte = 1024 * kb
+    all_stdout = bytes()
+    cmd = f'zip -r - {original_folder}'
+    process = await create_subprocess_shell(
+        cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    while True:
+        stdout = await process.stdout.read(byte)
+        all_stdout += stdout
+        if process.stdout.at_eof():
+            break
+
+    return all_stdout
+
+
+async def write_binary_archive_to_zip(binary_archive, file_archive_name, archive_folder):
     """Запись байтового архива в файл"""
 
     file_path = os.path.join(os.getcwd(), archive_folder)
@@ -64,4 +86,4 @@ if __name__ == '__main__':
     ARCHIVE_FILE = 'archive.zip'
     UNPACK_FOLDER = 'unpack_archive'
     ORIGINAL_FOLDER = 'original_photo'
-    main()
+    asyncio.run(main())
