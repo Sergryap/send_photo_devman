@@ -76,10 +76,24 @@ def unpack_archive(file_archive_name, unpack_folder, archive_folder):
             print('Архив уже распакован')
 
 
-def main():
-    archive = get_zip_archive(ORIGINAL_FOLDER, ARCHIVE_FOLDER, file_archive_name=None)
-    write_binary_archive_to_zip(archive, ARCHIVE_FILE, ARCHIVE_FOLDER)
-    unpack_archive(ARCHIVE_FILE, UNPACK_FOLDER, ARCHIVE_FOLDER)
+async def a_unpack_archive(file_archive_name, unpack_folder, archive_folder):
+    """
+    Распаковка архива file_name в папку folder_name текущей директории
+    из папки archive_folder
+    """
+
+    unpacking_file_path = os.path.join(os.getcwd(), archive_folder, file_archive_name)
+    file_path = os.path.join(os.getcwd(), unpack_folder)
+    os.makedirs(file_path, exist_ok=True)
+    cmd = f'unzip {unpacking_file_path} -d {file_path}'
+    await create_subprocess_shell(cmd)
+
+
+async def main():
+    # archive = get_zip_archive(ORIGINAL_FOLDER, ARCHIVE_FOLDER, file_archive_name=None)
+    archive = await get_binary_zip_archive(ORIGINAL_FOLDER, 300)
+    await write_binary_archive_to_zip(archive, ARCHIVE_FILE, ARCHIVE_FOLDER)
+    await sync_to_async(unpack_archive)(ARCHIVE_FILE, UNPACK_FOLDER, ARCHIVE_FOLDER)
 
 
 if __name__ == '__main__':
