@@ -53,11 +53,15 @@ def unpack_archive(file_archive_name, unpack_folder, archive_folder):
             print('Архив уже распакован')
 
 
+def main():
+    archive = get_zip_archive(ORIGINAL_FOLDER, ARCHIVE_FOLDER, file_archive_name=None)
+    write_binary_archive_to_zip(archive, ARCHIVE_FILE, ARCHIVE_FOLDER)
+    unpack_archive(ARCHIVE_FILE, UNPACK_FOLDER, ARCHIVE_FOLDER)
+
+
 if __name__ == '__main__':
     ARCHIVE_FOLDER = 'archives'
     ARCHIVE_FILE = 'archive.zip'
     UNPACK_FOLDER = 'unpack_archive'
     ORIGINAL_FOLDER = 'original_photo'
-    archive = get_zip_archive(ORIGINAL_FOLDER, ARCHIVE_FOLDER, file_archive_name=None)
-    write_binary_archive_to_zip(archive, ARCHIVE_FILE, ARCHIVE_FOLDER)
-    unpack_archive(ARCHIVE_FILE, UNPACK_FOLDER, ARCHIVE_FOLDER)
+    main()
