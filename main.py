@@ -50,8 +50,9 @@ async def write_binary_archive_to_zip(binary_archive, file_archive_name, archive
 
     file_path = os.path.join(os.getcwd(), archive_folder)
     os.makedirs(file_path, exist_ok=True)
-    with open(os.path.join(file_path, file_archive_name), 'wb') as binary_file:
-        binary_file.write(binary_archive)
+    file = os.path.join(file_path, file_archive_name)
+    async with aiofiles.open(file, 'wb') as binary_file:
+        await binary_file.write(binary_archive)
 
 
 def unpack_archive(file_archive_name, unpack_folder, archive_folder):
