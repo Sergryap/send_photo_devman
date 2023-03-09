@@ -2,6 +2,7 @@ import subprocess
 from asyncio.subprocess import create_subprocess_shell, create_subprocess_exec
 import asyncio
 import aiofiles
+import hashlib
 import os
 from asgiref.sync import sync_to_async
 
@@ -28,6 +29,8 @@ def get_zip_archive(original_folder, archive_folder, file_archive_name=None):
 
 
 async def get_binary_zip_archive(original_folder, kb):
+    hash_name = hashlib.md5(original_folder.encode('utf-8')).hexdigest()
+    print(hash_name)
     byte = 1024 * kb
     all_stdout = bytes()
     cmd = f'zip -r - {" ".join(os.listdir(original_folder))}'
