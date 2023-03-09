@@ -30,11 +30,12 @@ def get_zip_archive(original_folder, archive_folder, file_archive_name=None):
 async def get_binary_zip_archive(original_folder, kb):
     byte = 1024 * kb
     all_stdout = bytes()
-    cmd = f'zip -r - {original_folder}'
+    cmd = f'zip -r - {" ".join(os.listdir(original_folder))}'
     process = await create_subprocess_shell(
         cmd,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        stderr=asyncio.subprocess.PIPE,
+        cwd=original_folder
     )
     while True:
         stdout = await process.stdout.read(byte)
